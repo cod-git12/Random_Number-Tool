@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>乱数生成ツール</title>
+
+<style>
+body{
+  font-family: sans-serif;
+  background:#1e1e1e;
+  color:white;
+  text-align:center;
+  padding:40px;
+}
+
+.container{
+  background:#2a2a2a;
+  padding:30px;
+  border-radius:10px;
+  width:320px;
+  margin:auto;
+}
+
+input{
+  width:100%;
+  padding:8px;
+  margin:5px 0 15px 0;
+  border:none;
+  border-radius:5px;
+}
+
+button{
+  padding:10px 15px;
+  margin:5px;
+  border:none;
+  border-radius:6px;
+  background:#4CAF50;
+  color:white;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#45a049;
+}
+
+.result{
+  font-size:24px;
+  margin-top:20px;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+}
+
+.modal-content{
+  background:#2a2a2a;
+  padding:20px;
+  margin:10% auto;
+  width:300px;
+  border-radius:10px;
+  text-align:left;
+}
+
+.close{
+  float:right;
+  cursor:pointer;
+  font-size:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>乱数生成</h2>
+
+最小数<br>
+<input type="number" id="min">
+
+最大数<br>
+<input type="number" id="max">
+
+<button onclick="generate()">生成</button>
+<button onclick="openHistory()">履歴</button>
+
+<div class="result" id="result">結果: -</div>
+</div>
+
+<div class="modal" id="historyModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeHistory()">×</span>
+    <h3>結果履歴</h3>
+    <ul id="historyList"></ul>
+    <button onclick="clearHistory()">履歴クリア</button>
+  </div>
+</div>
+
+<script>
+
+let history = [];
+
+/* URLパラメータ読み込み */
+const params = new URLSearchParams(location.search);
+
+if(params.get("min")){
+  document.getElementById("min").value = params.get("min")
+}
+
+if(params.get("max")){
+  document.getElementById("max").value = params.get("max")
+}
+
+/* 乱数生成 */
+function generate(){
+
+  const min = Number(document.getElementById("min").value)
+  const max = Number(document.getElementById("max").value)
+
+  if(isNaN(min) || isNaN(max)){
+    alert("数値を入力してください")
+    return
+  }
+
+  const random = Math.floor(Math.random() * (max - min + 1)) + min
+
+  document.getElementById("result").textContent = "結果: " + random
+
+  history.unshift(random)
+
+  updateHistory()
+
+}
+
+/* 履歴表示 */
+function updateHistory(){
+
+  const list = document.getElementById("historyList")
+  list.innerHTML = ""
+
+  history.forEach(r=>{
+    const li = document.createElement("li")
+    li.textContent = r
+    list.appendChild(li)
+  })
+
+}
+
+/* モーダル */
+function openHistory(){
+  document.getElementById("historyModal").style.display="block"
+}
+
+function closeHistory(){
+  document.getElementById("historyModal").style.display="none"
+}
+
+function clearHistory(){
+  history = []
+  updateHistory()
+}
+
+</script>
+
+</body>
+</html>
